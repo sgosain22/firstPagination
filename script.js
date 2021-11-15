@@ -1,109 +1,150 @@
-
-
-var api_url1 = `https://api.instantwebtools.net/v1/passenger?page=0&size=10`;
-
-
-async function getData(api_url) {
-  let response = await fetch(api_url?api_url:api_url1);
-  let data = await response.json();
-  let list = data.data;
-  var row = "";
-  list.map((data, index) => {
-    var name = data.name;
-    var index = index;
-    var trips = data.trips;
-    data.airline.map((innerData, i) => {
-      return (row += `<tr>
-	<td>${index + 1}</td>
-	<td> <img src=${innerData.logo} alt="Airline logo"/></td>
-	<td>${innerData.name}</td>
-	<td>${name}</td>
-	<td>${innerData.country}</td>
-	<td>${trips} </td>
-</tr>`);
-    });
-    console.log(data.airline);
-  });
-   document.getElementById("tbody").innerHTML = row;
-}
-getData();
-
+let userId = [];
+let userName = [];
+let userCountry = [];
+let userSlogan = [];
 let page = 0;
-let dataNo = 10;
+let dataNo = 20;
 let dataId = 1;
+let url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
 
+function fetchData(url) {
+    fetch(url)
+    .then(res => res.json())
+    .then(data => getData(data));
+}
+
+function getData(data) {
+    table = '';
+    button = '';
+    userId = [];
+    userName = [];
+    userCountry = [];
+    userTrips = [];
+    userAirlines = [];
+    
+
+    data['data'].forEach((user) => {
+        userId.push(user._id);
+        userName.push(user.name);
+        userCountry.push(user.airline[0].country);
+        userTrips.push(user.trips);
+        userAirlines.push(user.airline[0].name);
+    })
+    for (let i = 0; i < userId.length; i++) {
+        table += `<tr>
+            <td>${dataId}</td>
+            <td>${userId[i]}</td>
+            <td>${userName[i]}</td>
+            <td>${userCountry[i]}</td>
+            <td>${userTrips[i]}</td>
+            <td>${userAirlines[i]}</td>
+        </tr>`
+        dataId += 1;
+    }
+    document.getElementById('table').innerHTML = table;
+    if (page == 631) {
+        button += `<button class="btn btn-primary btn-sm bg-danger p-1 m-1" id="${631}" onclick="pageNo(id)">${632}</button>`
+
+    }
+    else if(page==630) {
+        for (i = page + 1; i <= page + 2; i++) {
+            if (i == page + 1) {
+                button += `<button class="btn btn-primary btn-sm bg-danger p-1 m-1" id="${i - 1}" onclick="pageNo(id)">${i}</button>`
+            }
+            else {
+                button += `<button class="btn btn-primary btn-sm p-1 m-1" id="${i - 1}" onclick="pageNo(id)">${i}</button>`
+            }
+        }
+    }
+    else if(page==629) {
+        for (i = page + 1; i <= page + 3; i++) {
+            if (i == page + 1) {
+                button += `<button class="btn btn-primary btn-sm bg-danger p-1 m-1" id="${i - 1}" onclick="pageNo(id)">${i}</button>`
+            }
+            else {
+                button += `<button class="btn btn-primary btn-sm p-1 m-1" id="${i - 1}" onclick="pageNo(id)">${i}</button>`
+            }
+        }
+    }
+    else if(page<=628) {
+        for (i = page + 1; i <= page + 4; i++) {
+            if (i == page + 1) {
+                button += `<button class="btn btn-primary btn-sm bg-danger p-1 m-1" id="${i - 1}" onclick="pageNo(id)">${i}</button>`
+            }
+            else {
+                button += `<button class="btn btn-primary btn-sm p-1 m-1" id="${i - 1}" onclick="pageNo(id)">${i}</button>`
+            }
+        }
+    }
+    document.getElementById('button').innerHTML = button;
+    document.getElementById('page').innerHTML = `<label>Page ${page + 1}</label>`;
+
+}
 function nextClick() {
-  if (page < 631) {
-    page += 1;
-    api_url =
-      "https://api.instantwebtools.net/v1/passenger?page=" + page + "&size=10";
-    getData(api_url);
-  }
-}
+    if (page < 631) {
+        page += 1;
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        fetchData(url);
+    }
 
+}
 function previousClick() {
-  if (page > 0 && page <= 631) {
-    page -= 1;
-    dataId -= name.length + 10;
-    api_url =
-      "https://api.instantwebtools.net/v1/passenger?page=" + page + "&size=10";
-    console.log(page + "next");
-    getData(api_url);
-  }
+   
+    if (page>0 && page <= 631) {
+        page -= 1;
+        dataId -=(userName.length+20);
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        console.log(page + "next");
+        fetchData(url);
+    }
 }
+function fisrtClick() {
+    if (page > 0) {
+        dataNo = 20;
+        dataId = 1;
+        page = 0;
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        // console.log(url)
+        fetchData(url);
+    }
 
-function fisrtClick(id) {
-  if (page > 0) {
-    dataNo = 10;
-    dataId = 1;
-    page = 0;
-    api_url =
-      "https://api.instantwebtools.net/v1/passenger?page=" + page + "&size=10";
+}
+function lastClick() {
+    page = 631;
+    dataId = (630 * 20) + userName.length + 1;
+    url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
     // console.log(url)
-    getData(api_url);
-  }
+    fetchData(url);
 }
-
-function lastClick(id) {
-  page = 631;
-  dataId = 630 * 10 + name.length + 1;
-  api_url =
-    "https://api.instantwebtools.net/v1/passenger?page=" + page + "&size=10";
-  // console.log(url)
-  getData(api_url);
-  
-}
-
-
-
 function pageNo(id) {
-  if (Number(id) == page) {
-      page = Number(id);
-      api_url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
-      console.log(page)
-       getData(api_url);
-  }
-  else if (Number(id) - page == 1) {
-      console.log('1' + Number(id) - page)
-      page = Number(id);
-      dataNo += 20;
-      api_url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
-      getData(api_url);
-  }
-  else if (Number(id) - page == 2) {
-      console.log('2' + Number(id) - page)
-      page = Number(id);
-      dataNo += 40;
-      dataId += 20;
-      api_url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
-      getData(api_url);
-  }
-  else if (Number(id) - page == 3) {
-      console.log('3' + Number(id) - page)
-      page = Number(id);
-      dataNo += 60;
-      dataId += 40;
-      api_url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
-      getData(api_url);
-  }
+    if (Number(id) == page) {
+        page = Number(id);
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        console.log(page)
+    }
+    else if (Number(id) - page == 1) {
+        console.log('1' + Number(id) - page)
+        page = Number(id);
+        dataNo += 20;
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        fetchData(url);
+    }
+    else if (Number(id) - page == 2) {
+        console.log('2' + Number(id) - page)
+        page = Number(id);
+        dataNo += 40;
+        dataId += 20;
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        fetchData(url);
+    }
+    else if (Number(id) - page == 3) {
+        console.log('3' + Number(id) - page)
+        page = Number(id);
+        dataNo += 60;
+        dataId += 40;
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        fetchData(url);
+    }
 }
+
+fetchData(url);
