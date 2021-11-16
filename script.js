@@ -1,11 +1,12 @@
-let userId = [];
+let userId = [];  
 let userName = [];
 let userCountry = [];
 let userSlogan = [];
 let page = 0;
 let dataNo = 20;
 let dataId = 1;
-let url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+let url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
+
 
 function fetchData(url) {
     fetch(url)
@@ -29,12 +30,13 @@ function getData(data) {
         userCountry.push(user.airline[0].country);
         userTrips.push(user.trips);
         userAirlines.push(user.airline[0].name);
+        //totalPages = data.totalPages;
     })
     for (let i = 0; i < userId.length; i++) {
         table += `<tr>
             <td>${dataId}</td>
-            <td>${userId[i]}</td>
             <td>${userName[i]}</td>
+            <td>${userId[i]}</td>
             <td>${userCountry[i]}</td>
             <td>${userTrips[i]}</td>
             <td>${userAirlines[i]}</td>
@@ -83,7 +85,7 @@ function getData(data) {
 function nextClick() {
     if (page < 631) {
         page += 1;
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
         fetchData(url);
     }
 
@@ -93,7 +95,7 @@ function previousClick() {
     if (page>0 && page <= 631) {
         page -= 1;
         dataId -=(userName.length+20);
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
         console.log(page + "next");
         fetchData(url);
     }
@@ -103,7 +105,7 @@ function fisrtClick() {
         dataNo = 20;
         dataId = 1;
         page = 0;
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
         // console.log(url)
         fetchData(url);
     }
@@ -112,21 +114,20 @@ function fisrtClick() {
 function lastClick() {
     page = 631;
     dataId = (630 * 20) + userName.length + 1;
-    url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
-    // console.log(url)
+    url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
+     console.log(url)
     fetchData(url);
 }
 function pageNo(id) {
     if (Number(id) == page) {
         page = Number(id);
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
-        console.log(page)
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
+        
     }
     else if (Number(id) - page == 1) {
-        console.log('1' + Number(id) - page)
         page = Number(id);
         dataNo += 20;
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
         fetchData(url);
     }
     else if (Number(id) - page == 2) {
@@ -134,7 +135,7 @@ function pageNo(id) {
         page = Number(id);
         dataNo += 40;
         dataId += 20;
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
         fetchData(url);
     }
     else if (Number(id) - page == 3) {
@@ -142,7 +143,7 @@ function pageNo(id) {
         page = Number(id);
         dataNo += 60;
         dataId += 40;
-        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=20';
+        url = 'https://api.instantwebtools.net/v1/passenger?page=' + page + '&size=10';
         fetchData(url);
     }
 }
